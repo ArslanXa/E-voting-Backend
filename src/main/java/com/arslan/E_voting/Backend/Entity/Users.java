@@ -37,7 +37,7 @@ public class Users implements UserDetails {
     @Enumerated(EnumType.STRING)
     private Role role;
 
-    private boolean isVerified;
+
 
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
@@ -81,8 +81,9 @@ public class Users implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return isVerified;  // user can only login if verified
+        return true;
     }
+
 
     // Getters and setters for all fields below
 

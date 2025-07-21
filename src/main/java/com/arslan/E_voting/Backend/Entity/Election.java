@@ -33,6 +33,7 @@ public class Election {
     private Users createdBy;
 
     private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 
     @OneToMany(mappedBy = "election", cascade = CascadeType.ALL)
     private List<Candidate> candidates;
@@ -40,6 +41,17 @@ public class Election {
     @OneToMany(mappedBy = "election", cascade = CascadeType.ALL)
     private List<Vote> votes;
 
-    // Getters, Setters, Constructors
+    // 🔥 Auto-set timestamps
+    @PrePersist
+    public void prePersist() {
+        this.createdAt = LocalDateTime.now();
+        this.updatedAt = LocalDateTime.now(); // optional, if you want to track last change
+    }
+
+    @PreUpdate
+    public void preUpdate() {
+        this.updatedAt = LocalDateTime.now();
+    }
 }
+
 

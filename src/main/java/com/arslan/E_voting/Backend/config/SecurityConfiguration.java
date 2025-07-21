@@ -39,7 +39,7 @@ public class SecurityConfiguration {
                         ).permitAll()
                         .requestMatchers("/api/auth/register").permitAll()
                         .requestMatchers("/api/auth/login").permitAll()
-                        .requestMatchers("/api/books/**").authenticated()
+                        .requestMatchers("/api/elections/**").authenticated()
                         .anyRequest().denyAll()
                 )
                 .sessionManagement(session -> session

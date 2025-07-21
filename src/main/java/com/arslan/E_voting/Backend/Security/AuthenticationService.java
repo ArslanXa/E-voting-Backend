@@ -13,6 +13,9 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
+import java.util.Map;
+
 @Service
 @RequiredArgsConstructor
 public class AuthenticationService {
@@ -26,18 +29,23 @@ public class AuthenticationService {
         Users user = Users.builder()
                 .email(request.getEmail())
                 .password(passwordEncoder.encode(request.getPassword()))
-                .role(Role.valueOf(request.getRole().toUpperCase())) // "ADMIN" or "VOTER"
+                .role(Role.valueOf(request.getRole().toUpperCase()))
                 .build();
+
         userRepository.save(user);
 
-        String token = jwtService.generateToken(user);
+        Map<String, Object> extraClaims = new HashMap<>();
+        extraClaims.put("role", user.getRole().name());
+
+        String token = jwtService.generateToken(extraClaims, user);
 
         return AuthenticationResponse.builder()
                 .token(token)
                 .email(user.getEmail())
-                .role(String.valueOf(user.getRole()))
+                .role(user.getRole().name())
                 .build();
     }
+
 
     public AuthenticationResponse authenticate(AuthenticationRequest request) {
         authenticationManager.authenticate(
@@ -50,12 +58,16 @@ public class AuthenticationService {
         Users user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        String token = jwtService.generateToken(user);
+        Map<String, Object> extraClaims = new HashMap<>();
+        extraClaims.put("role", user.getRole().name());
+
+        String token = jwtService.generateToken(extraClaims, user);
 
         return AuthenticationResponse.builder()
                 .token(token)
                 .email(user.getEmail())
-                .role(String.valueOf(user.getRole()))
+                .role(user.getRole().name())
                 .build();
     }
+
 }
